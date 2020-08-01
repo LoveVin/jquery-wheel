@@ -134,49 +134,23 @@ window.$ = window.jQuery = function (selectorOrArray) {
   } else if (selectorOrArray instanceof Array) {
     elements = selectorOrArray;
   }
-  /*const api = {
-      addClass(className){
-          for(let i=0; i<elements.length; i++){
-              elements[i].classList.add(className); 
-          }
-          //return null;
-          //return api;
-          return this;
-      }
-  }
-  return api;*/
 
-
-  var api = Object.create(jQuery.prototype); //创造一个对象，这个对象的__proto__为jQuery.prototype
-
-  /*return {
-      elements: elements,
-      oldApi: selectorOrArray.oldApi
-  }*/
-
-  /*api.elements = elements;
-  api.oldApi = selectorOrArray.oldApi;*/
-
+  var api = Object.create(jQuery.prototype);
   Object.assign(api, {
     elements: elements,
     //为了让原型中访问到elements
     oldApi: selectorOrArray.oldApi //若有则有，若无则为null
 
-  }); //将后面对象的属性一一复制给前面的对象
-
+  });
   return api;
 };
-/*window.jQuery = window.$;*/
 
-
-jQuery.fn = jQuery.prototype = {
+jQuery.prototype = {
   constructor: jQuery,
-  jQuery: true,
   addClass: function addClass(className) {
     for (var i = 0; i < this.elements.length; i++) {
       this.elements[i].classList.add(className);
-    } //return api;
-
+    }
 
     return this;
   },
@@ -186,15 +160,9 @@ jQuery.fn = jQuery.prototype = {
     for (var i = 0; i < this.elements.length; i++) {
       array = array.concat(Array.from(this.elements[i].querySelectorAll(selector)));
     }
-    /*elements = childArray; 不能这样返回，因为返回的对象是同一个对象，当elements被修改时，
-    之前获得该api对象里面的elements也会被修改*/
-
 
     array.oldApi = this;
     /*要换api了，记录之前的Api,Array是对象，对象可以加属性*/
-
-    /*const newApi = jQuery(array);
-    return newApi;*/
 
     return jQuery(array);
   },
@@ -213,19 +181,19 @@ jQuery.fn = jQuery.prototype = {
   parent: function parent() {
     var array = [];
     this.each(function (node) {
-      /*if(array.indexOf(node.parentNode) >= 0)*/
       if (array.indexOf(node.parentNode) === -1) {
         array.push(node.parentNode);
       }
     });
+    array.oldApi = this;
     return jQuery(array);
   },
   children: function children() {
     var array = [];
     this.each(function (node) {
       array.push.apply(array, _toConsumableArray(node.children));
-      /*...是JS中的展开操作符，将数组每一项展开push*/
     });
+    array.oldApi = this;
     return jQuery(array);
   },
   print: function print() {
